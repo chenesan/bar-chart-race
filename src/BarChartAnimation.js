@@ -1,21 +1,7 @@
 import React from 'react';
-import { browserUsage } from '@vx/mock-data';
 import { Bar } from '@vx/shape';
 import { scaleLinear, scaleBand } from '@vx/scale';
 import { Text } from "@vx/text";
-
-const data = browserUsage[0];
-const keys = [
-  'Google Chrome',
-  'Internet Explorer',
-  'Firefox',
-  'Safari',
-  'Microsoft Edge',
-  'Opera',
-  'Mozilla',
-  'Other/Unknown',
-]
-const numbers = keys.map(key => Number(data[key]));
 
 const width = 600;
 const height = 450;
@@ -26,15 +12,6 @@ const padding = {
   bottom: 0,
   left: 100,
 };
-
-const xScale = scaleLinear({
-  domain: [0, Math.max(...numbers)],
-  range: [0, width - padding.left],
-})
-const yScale = scaleBand({
-  domain: keys,
-  range: [0, height],
-});
 
 const makeKeyFrames = (data) => {
   const dataByDateAndName = new Map(); 
@@ -115,15 +92,34 @@ const makeKeyFrames = (data) => {
 
 function BarChartAnimation(props) {
   const { data } = props;
-  const keyframes = makeKeyFrames(data);
+  const keyframes = React.useMemo(() => makeKeyFrames(data), [data]);
+  const [frameIdx, setFrameIdx] = React.useState(0);
+  const frame = keyframes[frameIdx];
+  if (!frame) {
+    return false;
+  }
+  const { date, data: frameData } = frame;
+  const values = frameData.map(({ value }) => value);
+  const names = frameData.map(({ name }) => name);
+  const xScale = scaleLinear({
+    domain: [0, Math.max(...values)],
+    range: [0, width - padding.left],
+  })
+  const yScale = scaleBand({
+    domain: names.slice(0, 12),
+    range: [0, height],
+  });
   return (
     <div>
       <svg width={width} height={height}>
-        {numbers.map(
+        {values.map(
           (value, idx) => {
-            const name = keys[idx];
+            const name = names[idx];
             const barX = padding.left;
             const barY = yScale(name);
+            if (typeof barY !== 'number') {
+              return false;
+            }
             const barWidth = xScale(value);
             const barHeight = yScale.bandwidth(); 
             return <>
@@ -135,7 +131,7 @@ function BarChartAnimation(props) {
                 height={barHeight}
                 fill="rgba(23, 233, 217, .5)"
               />
-              <Text x={barX + 10} y={barY + barHeight / 2}>{`${name} ${value}%`}</Text>
+              <Text x={barX + 10} y={barY + barHeight / 2}>{`${name} ${value}`}</Text>
             </>
           }
         )}
