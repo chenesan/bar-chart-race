@@ -95,10 +95,23 @@ function BarChartAnimation(props) {
   const keyframes = React.useMemo(() => makeKeyFrames(data), [data]);
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
+  const isEnd = !frame;
+  const loop = () => {
+    if (!isEnd) {
+      setFrameIdx(frameIdx + 1);
+    }
+  }
+  React.useEffect(
+    () => {
+      if (frame && frameIdx !== keyframes.length - 1) {
+        setTimeout(loop, 50)
+      }
+    }
+  );
   if (!frame) {
     return false;
   }
-  const { date, data: frameData } = frame;
+  const { data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
   const names = frameData.map(({ name }) => name);
   const xScale = scaleLinear({
