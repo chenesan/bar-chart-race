@@ -11,7 +11,7 @@ function App() {
     axios.get(dataUrl).then(resp => {
       const { data: csvString } = resp;
       const nextData = csvParse(csvString).slice(1).map(
-        ([date, name, category, value]) => ({ date: new Date(date), name, category, value })
+        ([date, name, category, value]) => ({ date, name, category, value: Number(value) })
       );
       setData(nextData);
     });
