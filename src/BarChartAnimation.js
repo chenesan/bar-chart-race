@@ -1,6 +1,7 @@
 import React from 'react';
+import { schemeTableau10 } from 'd3-scale-chromatic';
 import { Bar } from '@vx/shape';
-import { scaleLinear, scaleBand } from '@vx/scale';
+import { scaleLinear, scaleBand, scaleOrdinal } from '@vx/scale';
 import { Text } from "@vx/text";
 
 const width = 600;
@@ -87,12 +88,12 @@ const makeKeyFrames = (data) => {
     }
   });
 
-  return result;
+  return [result, nameList];
 }
 
 function BarChartAnimation(props) {
   const { data } = props;
-  const keyframes = React.useMemo(() => makeKeyFrames(data), [data]);
+  const [keyframes, nameList] = React.useMemo(() => makeKeyFrames(data), [data]);
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
   const isEnd = !frame;
@@ -122,26 +123,27 @@ function BarChartAnimation(props) {
     domain: names.slice(0, 12),
     range: [0, height],
   });
+  const colorScale = scaleOrdinal(schemeTableau10).domain(nameList).range(schemeTableau10);
   return (
     <div>
       <svg width={width} height={height}>
         {values.map(
           (value, idx) => {
-            const name = names[idx];
+            const { name } = frameData[idx];
             const barX = padding.left;
             const barY = yScale(name);
             if (typeof barY !== 'number') {
               return false;
             }
             const barWidth = xScale(value);
-            const barHeight = yScale.bandwidth(); 
+            const barHeight = yScale.bandwidth();
             return <React.Fragment key={name}>
               <Bar
                 x={barX}
                 y={barY}
                 width={barWidth}
                 height={barHeight}
-                fill="rgba(23, 233, 217, .5)"
+                fill={colorScale(name)}
               />
               <Text x={barX + 10} y={barY + barHeight / 2}>{`${name} ${value}`}</Text>
             </React.Fragment>
