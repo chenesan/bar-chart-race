@@ -122,9 +122,8 @@ function BarChartAnimation(props) {
             }
             const barWidth = xScale(value);
             const barHeight = yScale.bandwidth(); 
-            return <>
+            return <React.Fragment key={name}>
               <Bar
-                key={name}
                 x={barX}
                 y={barY}
                 width={barWidth}
@@ -132,7 +131,7 @@ function BarChartAnimation(props) {
                 fill="rgba(23, 233, 217, .5)"
               />
               <Text x={barX + 10} y={barY + barHeight / 2}>{`${name} ${value}`}</Text>
-            </>
+            </React.Fragment>
           }
         )}
         <line
