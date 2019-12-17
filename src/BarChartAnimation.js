@@ -90,6 +90,11 @@ const makeKeyFrames = (data) => {
   return [result, nameList];
 }
 
+const yScale = scaleBand({
+  domain: Array(12).fill(0).map((_, idx) => idx),
+  range: [0, height],
+});
+
 function BarChartAnimation(props) {
   const { data } = props;
   const [keyframes, nameList] = React.useMemo(() => makeKeyFrames(data), [data]);
@@ -108,21 +113,19 @@ function BarChartAnimation(props) {
       }
     }
   );
+  const colorScale = React.useMemo(
+    () => scaleOrdinal(schemeTableau10).domain(nameList).range(schemeTableau10),
+    [nameList]
+  );
   if (!frame) {
     return false;
   }
   const { data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
-  const names = frameData.map(({ name }) => name);
   const xScale = scaleLinear({
     domain: [0, Math.max(...values)],
     range: [0, width - padding.left],
   })
-  const yScale = scaleBand({
-    domain: names.slice(0, 12),
-    range: [0, height],
-  });
-  const colorScale = scaleOrdinal(schemeTableau10).domain(nameList).range(schemeTableau10);
   return (
     <div>
       <svg width={width} height={height}>
@@ -131,7 +134,7 @@ function BarChartAnimation(props) {
             const { name } = frameData[idx];
             const color = colorScale(name);
             const barX = padding.left;
-            const barY = yScale(name);
+            const barY = yScale(idx);
             const barWidth = xScale(value);
             const barHeight = yScale.bandwidth();
             if (typeof barY !== 'number') {
