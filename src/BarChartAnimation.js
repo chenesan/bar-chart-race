@@ -1,8 +1,7 @@
 import React from 'react';
 import { schemeTableau10 } from 'd3-scale-chromatic';
-import { Bar } from '@vx/shape';
 import { scaleLinear, scaleBand, scaleOrdinal } from '@vx/scale';
-import { Text } from "@vx/text";
+import SpringBar from './SpringBar';
 
 const width = 600;
 const height = 450;
@@ -105,7 +104,7 @@ function BarChartAnimation(props) {
   React.useEffect(
     () => {
       if (frame && frameIdx !== keyframes.length - 1) {
-        setTimeout(loop, 50)
+        setTimeout(loop, 100)
       }
     }
   );
@@ -130,23 +129,24 @@ function BarChartAnimation(props) {
         {values.map(
           (value, idx) => {
             const { name } = frameData[idx];
+            const color = colorScale(name);
             const barX = padding.left;
             const barY = yScale(name);
+            const barWidth = xScale(value);
+            const barHeight = yScale.bandwidth();
             if (typeof barY !== 'number') {
               return false;
             }
-            const barWidth = xScale(value);
-            const barHeight = yScale.bandwidth();
-            return <React.Fragment key={name}>
-              <Bar
-                x={barX}
-                y={barY}
-                width={barWidth}
-                height={barHeight}
-                fill={colorScale(name)}
-              />
-              <Text x={barX + 10} y={barY + barHeight / 2}>{`${name} ${value}`}</Text>
-            </React.Fragment>
+            return <SpringBar
+              barX={barX}
+              barY={barY}
+              barWidth={barWidth}
+              barHeight={barHeight}
+              color={color}
+              value={value}
+              name={name}
+              key={name}
+            />
           }
         )}
         <line
