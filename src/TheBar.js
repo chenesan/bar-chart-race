@@ -12,9 +12,6 @@ const TheBar = ({
   value,
 }) => {
   const text = `${name} ${value}`;
-  if (typeof barY !== 'number') {
-    return false;
-  }
   return <React.Fragment>
     <Bar
       x={barX}

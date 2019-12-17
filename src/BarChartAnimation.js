@@ -104,7 +104,7 @@ function BarChartAnimation(props) {
   React.useEffect(
     () => {
       if (frame && frameIdx !== keyframes.length - 1) {
-        setTimeout(loop, 100)
+        setTimeout(loop, 250)
       }
     }
   );
