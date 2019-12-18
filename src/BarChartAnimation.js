@@ -133,7 +133,7 @@ function BarChartAnimation(props) {
     <div>
       <svg width={width} height={height}>
         <SpringBarGroup
-          frameData={frameData}
+          frameData={frameData.slice(0, 12)}
           xScale={xScale}
           yScale={yScale}
           colorScale={colorScale}
