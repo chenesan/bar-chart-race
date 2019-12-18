@@ -3,15 +3,12 @@ import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
 import SpringBarGroup from "./SpringBarGroup";
 
-const makeKeyFrames = (data, numOfSlice) => {
+const buildFindData = data => {
   const dataByDateAndName = new Map();
-  const dates = [];
-  const nameMap = {};
   data.forEach(dataPoint => {
-    const { date, name, category } = dataPoint;
+    const { date, name } = dataPoint;
     if (!dataByDateAndName.get(date)) {
       dataByDateAndName.set(date, { [name]: dataPoint });
-      dates.push(date);
     } else {
       const nextGroup = {
         ...dataByDateAndName.get(date),
@@ -19,29 +16,40 @@ const makeKeyFrames = (data, numOfSlice) => {
       };
       dataByDateAndName.set(date, nextGroup);
     }
-    if (!nameMap[name]) {
-      nameMap[name] = { category };
-    }
   });
-  const nameList = Object.keys(nameMap);
-  const frames = dates.sort((a, b) => a - b > 0).map(date => ({
+  const finder = ({ date, name }) => {
+    try {
+      return dataByDateAndName.get(date)[name];
+    } catch (e) {
+      return null; 
+    }
+  };
+  return finder;
+}
+
+const makeKeyFrames = (data, numOfSlice) => {
+  const findData = buildFindData(data);
+  const nameSet = new Set(data.map(({ name }) => name));
+  const nameList = [...nameSet];
+  const dateSet = new Set(data.map(({ date }) => date));
+  const dateList = [...dateSet];
+
+  const frames = dateList.sort((a, b) => a - b > 0).map(date => ({
     date,
     data: nameList.map(name => {
-      const { category } = nameMap[name];
-      const dataPoint = dataByDateAndName.get(date)[name];
+      const dataPoint = findData({ date , name});
       return {
-        name,
-        category,
-        value: dataPoint ? dataPoint.value : 0
+        ...dataPoint,
+        value: dataPoint ? dataPoint.value : 0,
       };
     })
   }));
-  const result = frames
-    .reduce((keyframes, frame, idx) => {
+  const keyframes = frames
+    .reduce((result, frame, idx) => {
       const prev = frame;
       const next = idx !== frames.length - 1 ? frames[idx + 1] : null;
       if (!next) {
-        keyframes.push({ ...frame, date: new Date(frame.date) });
+        result.push({ ...frame, date: new Date(frame.date) });
       } else {
         const prevTimestamp = new Date(prev.date).getTime();
         const nextTimestamp = new Date(next.date).getTime();
@@ -50,7 +58,7 @@ const makeKeyFrames = (data, numOfSlice) => {
           const sliceDate = new Date(prevTimestamp + diff * i / numOfSlice);
           const sliceData = frame.data.map(({ name, value, ...others }) => {
             const prevValue = value;
-            const nextDataPoint = dataByDateAndName.get(next.date)[name];
+            const nextDataPoint = findData({ date: next.date, name });
             const nextValue = nextDataPoint ? nextDataPoint.value : 0;
             const sliceValue =
               prevValue + (nextValue - prevValue) * i / numOfSlice;
@@ -60,13 +68,13 @@ const makeKeyFrames = (data, numOfSlice) => {
               ...others
             };
           });
-          keyframes.push({
+          result.push({
             date: sliceDate,
             data: sliceData
           });
         }
       }
-      return keyframes;
+      return result;
     }, [])
     .map(({ date, data }) => {
       return {
@@ -75,7 +83,7 @@ const makeKeyFrames = (data, numOfSlice) => {
       };
     });
 
-  return [result, nameList];
+  return [keyframes, nameList];
 };
 
 function BarChartAnimation({
