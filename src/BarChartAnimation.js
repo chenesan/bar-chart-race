@@ -87,16 +87,6 @@ function BarChartAnimation({
   height,
   padding
 }) {
-  const yScale = React.useMemo(
-    () =>
-      scaleBand({
-        domain: Array(numOfBars)
-          .fill(0)
-          .map((_, idx) => idx),
-        range: [0, height]
-      }),
-    [numOfBars, height]
-  );
   const [keyframes, nameList] = React.useMemo(
     () => makeKeyFrames(data, numOfSlice), 
     [data, numOfSlice]
@@ -111,6 +101,22 @@ function BarChartAnimation({
       }, duration);
     }
   });
+  const { data: frameData } = frame;
+  const values = frameData.map(({ value }) => value);
+  const xScale = scaleLinear({
+    domain: [0, Math.max(...values)],
+    range: [padding.left, width]
+  });
+  const yScale = React.useMemo(
+    () =>
+      scaleBand({
+        domain: Array(numOfBars)
+          .fill(0)
+          .map((_, idx) => idx),
+        range: [0, height]
+      }),
+    [numOfBars, height]
+  );
   const colorScale = React.useMemo(
     () =>
       scaleOrdinal(schemeTableau10)
@@ -118,12 +124,6 @@ function BarChartAnimation({
         .range(schemeTableau10),
     [nameList]
   );
-  const { data: frameData } = frame;
-  const values = frameData.map(({ value }) => value);
-  const xScale = scaleLinear({
-    domain: [0, Math.max(...values)],
-    range: [padding.left, width]
-  });
   return (
     <svg width={width} height={height}>
       <SpringBarGroup
