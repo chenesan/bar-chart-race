@@ -13,7 +13,7 @@ const padding = {
   left: 100
 };
 
-const makeKeyFrames = data => {
+const makeKeyFrames = (data, numOfSlice) => {
   const dataByDateAndName = new Map();
   const dates = [];
   const nameMap = {};
@@ -53,7 +53,6 @@ const makeKeyFrames = data => {
       if (!next) {
         keyframes.push({ ...frame, date: new Date(frame.date) });
       } else {
-        const numOfSlice = 10;
         const prevTimestamp = new Date(prev.date).getTime();
         const nextTimestamp = new Date(next.date).getTime();
         const diff = nextTimestamp - prevTimestamp;
@@ -89,8 +88,12 @@ const makeKeyFrames = data => {
   return [result, nameList];
 };
 
-function BarChartAnimation(props) {
-  const { data, numOfBars, duration } = props;
+function BarChartAnimation({
+  data,
+  numOfBars,
+  numOfSlice,
+  duration,
+}) {
   const yScale = React.useMemo(
     () =>
       scaleBand({
@@ -101,9 +104,10 @@ function BarChartAnimation(props) {
       }),
     [numOfBars]
   );
-  const [keyframes, nameList] = React.useMemo(() => makeKeyFrames(data), [
-    data
-  ]);
+  const [keyframes, nameList] = React.useMemo(
+    () => makeKeyFrames(data, numOfSlice), 
+    [data, numOfSlice]
+  );
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
   React.useEffect(() => {
