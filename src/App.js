@@ -4,6 +4,7 @@ import csvParse from "csv-parse/lib/sync";
 import BarChartAnimation from "./BarChartAnimation";
 
 const dataUrl = "/data/category-brands.csv";
+const numOfBars = 12;
 
 function App() {
   const [data, setData] = React.useState([]);
@@ -24,7 +25,7 @@ function App() {
   if (data.length === 0) {
     return false;
   }
-  return <BarChartAnimation data={data} />;
+  return <BarChartAnimation data={data} numOfBars={numOfBars} />;
 }
 
 export default App;

@@ -82,31 +82,32 @@ const makeKeyFrames = data => {
     .map(({ date, data }) => {
       return {
         date,
-        data: data
-          .sort((a, b) => b.value - a.value > 0)
+        data: data.sort((a, b) => b.value - a.value > 0)
       };
     });
 
   return [result, nameList];
 };
 
-const yScale = scaleBand({
-  domain: Array(12)
-    .fill(0)
-    .map((_, idx) => idx),
-  range: [0, height]
-});
-
 function BarChartAnimation(props) {
-  const { data } = props;
-  const [keyframes, nameList] = React.useMemo(
-    () => makeKeyFrames(data),
-    [data]
+  const { data, numOfBars } = props;
+  const yScale = React.useMemo(
+    () =>
+      scaleBand({
+        domain: Array(numOfBars)
+          .fill(0)
+          .map((_, idx) => idx),
+        range: [0, height]
+      }),
+    [numOfBars]
   );
+  const [keyframes, nameList] = React.useMemo(() => makeKeyFrames(data), [
+    data
+  ]);
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
   React.useEffect(() => {
-    const isLastFrame = frameIdx === keyframes.length - 1
+    const isLastFrame = frameIdx === keyframes.length - 1;
     if (!isLastFrame) {
       setTimeout(() => {
         setFrameIdx(frameIdx + 1);
@@ -129,7 +130,7 @@ function BarChartAnimation(props) {
   return (
     <svg width={width} height={height}>
       <SpringBarGroup
-        frameData={frameData.slice(0, 12)}
+        frameData={frameData.slice(0, numOfBars)}
         xScale={xScale}
         yScale={yScale}
         colorScale={colorScale}
