@@ -90,7 +90,7 @@ const makeKeyFrames = data => {
 };
 
 function BarChartAnimation(props) {
-  const { data, numOfBars } = props;
+  const { data, numOfBars, duration } = props;
   const yScale = React.useMemo(
     () =>
       scaleBand({
@@ -111,7 +111,7 @@ function BarChartAnimation(props) {
     if (!isLastFrame) {
       setTimeout(() => {
         setFrameIdx(frameIdx + 1);
-      }, 250);
+      }, duration);
     }
   });
   const colorScale = React.useMemo(

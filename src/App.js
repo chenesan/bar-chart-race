@@ -5,6 +5,7 @@ import BarChartAnimation from "./BarChartAnimation";
 
 const dataUrl = "/data/category-brands.csv";
 const numOfBars = 12;
+const duration = 1000; 
 
 function App() {
   const [data, setData] = React.useState([]);
@@ -25,7 +26,7 @@ function App() {
   if (data.length === 0) {
     return false;
   }
-  return <BarChartAnimation data={data} numOfBars={numOfBars} />;
+  return <BarChartAnimation data={data} numOfBars={numOfBars} duration={duration} />;
 }
 
 export default App;
