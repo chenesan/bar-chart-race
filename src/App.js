@@ -7,6 +7,14 @@ const dataUrl = "/data/category-brands.csv";
 const numOfBars = 12;
 const duration = 250; 
 const numOfSlice = 10;
+const chartWidth = 1000;
+const chartHeight = 450;
+const chartPadding = {
+  top: 0,
+  right: 0,
+  bottom: 0,
+  left: 100
+};
 
 function App() {
   const [data, setData] = React.useState([]);
@@ -32,6 +40,9 @@ function App() {
     numOfBars={numOfBars}
     numOfSlice={numOfSlice}
     duration={duration}
+    width={chartWidth}
+    height={chartHeight}
+    padding={chartPadding}
   />;
 }
 

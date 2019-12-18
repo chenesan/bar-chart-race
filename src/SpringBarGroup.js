@@ -4,7 +4,7 @@ import Bar from "./Bar";
 
 const AnimatedBar = animated(Bar);
 
-const SpringBars = ({ frameData, xScale, yScale, colorScale, padding }) => {
+const SpringBars = ({ frameData, xScale, yScale, colorScale }) => {
   const transitions = useTransition(
     frameData.map(({ name, value }, idx) => ({
       y: yScale(idx),
@@ -26,7 +26,7 @@ const SpringBars = ({ frameData, xScale, yScale, colorScale, padding }) => {
     const { name } = item;
     return (
       <AnimatedBar
-        x={padding.left}
+        x={xScale(0)}
         y={y}
         width={width}
         height={yScale.bandwidth()}

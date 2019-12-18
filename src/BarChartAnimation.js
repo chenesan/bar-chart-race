@@ -3,16 +3,6 @@ import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
 import SpringBarGroup from "./SpringBarGroup";
 
-const width = 600;
-const height = 450;
-
-const padding = {
-  top: 0,
-  right: 0,
-  bottom: 0,
-  left: 100
-};
-
 const makeKeyFrames = (data, numOfSlice) => {
   const dataByDateAndName = new Map();
   const dates = [];
@@ -93,6 +83,9 @@ function BarChartAnimation({
   numOfBars,
   numOfSlice,
   duration,
+  width,
+  height,
+  padding
 }) {
   const yScale = React.useMemo(
     () =>
@@ -102,7 +95,7 @@ function BarChartAnimation({
           .map((_, idx) => idx),
         range: [0, height]
       }),
-    [numOfBars]
+    [numOfBars, height]
   );
   const [keyframes, nameList] = React.useMemo(
     () => makeKeyFrames(data, numOfSlice), 
@@ -129,7 +122,7 @@ function BarChartAnimation({
   const values = frameData.map(({ value }) => value);
   const xScale = scaleLinear({
     domain: [0, Math.max(...values)],
-    range: [0, width - padding.left]
+    range: [padding.left, width]
   });
   return (
     <svg width={width} height={height}>
@@ -138,7 +131,6 @@ function BarChartAnimation({
         xScale={xScale}
         yScale={yScale}
         colorScale={colorScale}
-        padding={padding}
       />
       <line
         x1={padding.left}
@@ -149,6 +141,17 @@ function BarChartAnimation({
       />
     </svg>
   );
+}
+
+BarChartAnimation.defaultProps = {
+  width: 600,
+  height: 450,
+  padding: {
+    top: 0,
+    right: 0,
+    bottom: 0,
+    left: 100
+  },
 }
 
 export default BarChartAnimation;
