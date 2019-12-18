@@ -1,7 +1,7 @@
 import React from 'react';
 import { schemeTableau10 } from 'd3-scale-chromatic';
 import { scaleLinear, scaleBand, scaleOrdinal } from '@vx/scale';
-import SpringBar from './SpringBar';
+import SpringBarGroup from './SpringBarGroup';
 
 const width = 600;
 const height = 450;
@@ -84,6 +84,7 @@ const makeKeyFrames = (data) => {
     return {
       date,
       data: data.sort((a,b) => b.value - a.value > 0)
+        .map((dataPoint, idx) => ({ ...dataPoint, rank: idx > 11 ? 12 : idx + 1}))
     }
   });
 
@@ -101,15 +102,17 @@ function BarChartAnimation(props) {
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
   const isEnd = !frame;
-  const loop = () => {
-    if (!isEnd) {
-      setFrameIdx(frameIdx + 1);
-    }
-  }
   React.useEffect(
     () => {
       if (frame && frameIdx !== keyframes.length - 1) {
-        setTimeout(loop, 250)
+        setTimeout(
+          () => {
+            if (!isEnd) {
+              setFrameIdx(frameIdx + 1);
+            }
+          },
+          250
+        )
       }
     }
   );
@@ -129,29 +132,13 @@ function BarChartAnimation(props) {
   return (
     <div>
       <svg width={width} height={height}>
-        {values.map(
-          (value, idx) => {
-            const { name } = frameData[idx];
-            const color = colorScale(name);
-            const barX = padding.left;
-            const barY = yScale(idx);
-            const barWidth = xScale(value);
-            const barHeight = yScale.bandwidth();
-            if (typeof barY !== 'number') {
-              return false;
-            }
-            return <SpringBar
-              barX={barX}
-              barY={barY}
-              barWidth={barWidth}
-              barHeight={barHeight}
-              color={color}
-              value={value}
-              name={name}
-              key={name}
-            />
-          }
-        )}
+        <SpringBarGroup
+          frameData={frameData}
+          xScale={xScale}
+          yScale={yScale}
+          colorScale={colorScale}
+          padding={padding}
+        />
         <line
           x1={padding.left}
           y1={0}
