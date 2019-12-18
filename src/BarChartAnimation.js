@@ -38,7 +38,6 @@ const makeKeyFrames = data => {
     date,
     data: nameList.map(name => {
       const { category } = nameMap[name];
-
       const dataPoint = dataByDateAndName.get(date)[name];
       return {
         name,
@@ -85,10 +84,6 @@ const makeKeyFrames = data => {
         date,
         data: data
           .sort((a, b) => b.value - a.value > 0)
-          .map((dataPoint, idx) => ({
-            ...dataPoint,
-            rank: idx > 11 ? 12 : idx + 1
-          }))
       };
     });
 
@@ -110,13 +105,11 @@ function BarChartAnimation(props) {
   );
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
-  const isEnd = !frame;
   React.useEffect(() => {
-    if (frame && frameIdx !== keyframes.length - 1) {
+    const isLastFrame = frameIdx === keyframes.length - 1
+    if (!isLastFrame) {
       setTimeout(() => {
-        if (!isEnd) {
-          setFrameIdx(frameIdx + 1);
-        }
+        setFrameIdx(frameIdx + 1);
       }, 250);
     }
   });
