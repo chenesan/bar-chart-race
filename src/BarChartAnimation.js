@@ -104,9 +104,10 @@ const yScale = scaleBand({
 
 function BarChartAnimation(props) {
   const { data } = props;
-  const [keyframes, nameList] = React.useMemo(() => makeKeyFrames(data), [
-    data
-  ]);
+  const [keyframes, nameList] = React.useMemo(
+    () => makeKeyFrames(data),
+    [data]
+  );
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
   const isEnd = !frame;
@@ -126,9 +127,6 @@ function BarChartAnimation(props) {
         .range(schemeTableau10),
     [nameList]
   );
-  if (!frame) {
-    return false;
-  }
   const { data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
   const xScale = scaleLinear({
@@ -136,24 +134,22 @@ function BarChartAnimation(props) {
     range: [0, width - padding.left]
   });
   return (
-    <div>
-      <svg width={width} height={height}>
-        <SpringBarGroup
-          frameData={frameData.slice(0, 12)}
-          xScale={xScale}
-          yScale={yScale}
-          colorScale={colorScale}
-          padding={padding}
-        />
-        <line
-          x1={padding.left}
-          y1={0}
-          x2={padding.left}
-          y2={height}
-          stroke="black"
-        />
-      </svg>
-    </div>
+    <svg width={width} height={height}>
+      <SpringBarGroup
+        frameData={frameData.slice(0, 12)}
+        xScale={xScale}
+        yScale={yScale}
+        colorScale={colorScale}
+        padding={padding}
+      />
+      <line
+        x1={padding.left}
+        y1={0}
+        x2={padding.left}
+        y2={height}
+        stroke="black"
+      />
+    </svg>
   );
 }
 

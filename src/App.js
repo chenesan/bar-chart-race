@@ -21,6 +21,9 @@ function App() {
       setData(nextData);
     });
   }, []);
+  if (data.length === 0) {
+    return false;
+  }
   return <BarChartAnimation data={data} />;
 }
 
