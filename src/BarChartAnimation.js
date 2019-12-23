@@ -34,7 +34,7 @@ const makeKeyFrames = (data, numOfSlice) => {
   const dateSet = new Set(data.map(({ date }) => date));
   const dateList = [...dateSet];
 
-  const frames = dateList.sort((a, b) => a - b > 0).map(date => ({
+  const frames = dateList.sort().map(date => ({
     date,
     data: nameList.map(name => {
       const dataPoint = findData({ date , name});
@@ -79,7 +79,7 @@ const makeKeyFrames = (data, numOfSlice) => {
     .map(({ date, data }) => {
       return {
         date,
-        data: data.sort((a, b) => b.value - a.value > 0)
+        data: data.sort((a, b) => b.value - a.value)
       };
     });
 
