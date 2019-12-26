@@ -12,7 +12,7 @@ const chartHeight = 600;
 const chartPadding = {
   top: 50,
   right: 50,
-  bottom: 50,
+  bottom: 0,
   left: 50
 };
 

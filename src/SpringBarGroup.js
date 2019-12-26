@@ -15,10 +15,11 @@ const SpringBars = ({ frameData, xScale, yScale, colorScale }) => {
     d => d.name,
     {
       initial: d => d,
-      from: { y: 470, width: 0, value: 0 },
-      leave: { y: 470, width: 0, value: 0 },
+      from: { y: yScale.range()[1] + 50, width: 0, value: 0 },
+      leave: { y: yScale.range()[1] + 50, width: 0, value: 0 },
       enter: d => d,
-      update: d => d
+      update: d => d,
+      unique: true,
     }
   );
   return transitions.map(({ item, props }) => {
