@@ -1,6 +1,8 @@
 import React from "react";
 import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
+import { AxisTop } from "@vx/axis";
+import { Group } from "@vx/group";
 import SpringBarGroup from "./SpringBarGroup";
 
 const buildFindData = data => {
@@ -111,9 +113,11 @@ function BarChartAnimation({
   });
   const { data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
+  const xMax = width - padding.left - padding.right;
+  const yMax = height - padding.top - padding.bottom;
   const xScale = scaleLinear({
     domain: [0, Math.max(...values)],
-    range: [padding.left, width - padding.left]
+    range: [0, xMax]
   });
   const yScale = React.useMemo(
     () =>
@@ -121,9 +125,9 @@ function BarChartAnimation({
         domain: Array(numOfBars)
           .fill(0)
           .map((_, idx) => idx),
-        range: [0, height]
+        range: [0, yMax]
       }),
-    [numOfBars, height]
+    [numOfBars, yMax]
   );
   const colorScale = React.useMemo(
     () =>
@@ -134,19 +138,27 @@ function BarChartAnimation({
   );
   return (
     <svg width={width} height={height}>
-      <SpringBarGroup
-        frameData={frameData.slice(0, numOfBars)}
-        xScale={xScale}
-        yScale={yScale}
-        colorScale={colorScale}
-      />
-      <line
-        x1={padding.left}
-        y1={0}
-        x2={padding.left}
-        y2={height}
-        stroke="black"
-      />
+      <Group top={padding.top} left={padding.left}>
+        <SpringBarGroup
+          frameData={frameData.slice(0, numOfBars)}
+          xScale={xScale}
+          yScale={yScale}
+          colorScale={colorScale}
+        />
+        <line
+          x1={0}
+          y1={0}
+          x2={0}
+          y2={yMax}
+          stroke="black"
+        />
+        <AxisTop
+          top={0}
+          left={0}
+          scale={xScale}
+        />
+      </Group>
+      
     </svg>
   );
 }
