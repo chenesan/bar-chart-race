@@ -7,7 +7,7 @@ const dataUrl = "/data/category-brands.csv";
 const numOfBars = 12;
 const duration = 250; 
 const numOfSlice = 10;
-const chartWidth = 800;
+const chartWidth = 1200;
 const chartHeight = 600;
 const chartPadding = {
   top: 50,
