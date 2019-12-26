@@ -113,7 +113,7 @@ function BarChartAnimation({
   const values = frameData.map(({ value }) => value);
   const xScale = scaleLinear({
     domain: [0, Math.max(...values)],
-    range: [padding.left, width]
+    range: [padding.left, width - padding.left]
   });
   const yScale = React.useMemo(
     () =>
