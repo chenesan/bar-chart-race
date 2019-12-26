@@ -4,6 +4,7 @@ import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
 import { AxisTop } from "@vx/axis";
 import { Group } from "@vx/group";
 import SpringBarGroup from "./SpringBarGroup";
+import { Spring } from "react-spring/renderprops";
 
 const buildFindData = data => {
   const dataByDateAndName = new Map();
@@ -152,11 +153,21 @@ function BarChartAnimation({
           y2={yMax}
           stroke="black"
         />
-        <AxisTop
-          top={0}
-          left={0}
-          scale={xScale}
-        />
+        <Spring to={{ domainMax: Math.max(...values) }}>
+          {({ domainMax }) => {
+            const xScaleForAxis = scaleLinear({
+              domain: [0, domainMax],
+              range: [0, xMax]
+            });
+            return <AxisTop
+              top={0}
+              left={0}
+              scale={xScaleForAxis}
+              tickLabelProps={() => ({ textAnchor: 'middle', dy: '-0.25em', fontSize: 12, })}
+              numTicks={5}
+            />
+          }}
+        </Spring>
       </Group>
       
     </svg>
