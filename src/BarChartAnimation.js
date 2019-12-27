@@ -149,6 +149,7 @@ function BarChartAnimation({
       }),
     [numOfBars, yMax]
   );
+
   const colorScale = React.useMemo(
     () =>
       scaleOrdinal(schemeTableau10)
