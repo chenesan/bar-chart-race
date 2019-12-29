@@ -2,18 +2,18 @@ import React from "react";
 import { Spring, animated } from "react-spring/renderprops";
 import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
-import { AxisTop } from "@vx/axis";
+import { AxisTop as VxAxisTop } from "@vx/axis";
 import { Group } from "@vx/group";
 import RacingBarGroup from "./RacingBarGroup";
 
-class MyAxisTop extends React.Component {
+class AxisTop extends React.Component {
   render() {
     const { domainMax, xMax } = this.props;
     const xScaleForAxis = scaleLinear({
       domain: [0, domainMax],
       range: [0, xMax]
     });
-    return <AxisTop
+    return <VxAxisTop
       top={0}
       left={0}
       scale={xScaleForAxis}
@@ -23,7 +23,7 @@ class MyAxisTop extends React.Component {
   }
 }
 
-const AnimatedAxisTop = animated(MyAxisTop);
+const AnimatedAxisTop = animated(AxisTop);
 
 function RacingBarChart({
   numOfBars,
