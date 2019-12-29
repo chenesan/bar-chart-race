@@ -1,10 +1,10 @@
 import React from "react";
+import { Spring, animated } from "react-spring/renderprops";
 import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
 import { AxisTop } from "@vx/axis";
 import { Group } from "@vx/group";
-import SpringBarGroup from "./SpringBarGroup";
-import { Spring, animated } from "react-spring/renderprops";
+import RacingBarGroup from "./RacingBarGroup";
 
 class MyAxisTop extends React.Component {
   render() {
@@ -80,7 +80,7 @@ function RacingBarChart({
   return (
     <svg width={width} height={height}>
       <Group top={padding.top} left={padding.left}>
-        <SpringBarGroup
+        <RacingBarGroup
           frameData={frameData.slice(0, numOfBars)}
           xScale={xScale}
           yScale={yScale}
