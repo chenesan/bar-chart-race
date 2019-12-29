@@ -25,7 +25,7 @@ class MyAxisTop extends React.Component {
 
 const AnimatedAxisTop = animated(MyAxisTop);
 
-function BarChartAnimation({
+function RacingBarChart({
   numOfBars,
   width,
   height,
@@ -107,7 +107,7 @@ function BarChartAnimation({
   );
 }
 
-BarChartAnimation.defaultProps = {
+RacingBarChart.defaultProps = {
   width: 600,
   height: 450,
   padding: {
@@ -118,4 +118,4 @@ BarChartAnimation.defaultProps = {
   },
 }
 
-export default BarChartAnimation;
+export default RacingBarChart;

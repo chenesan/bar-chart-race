@@ -1,7 +1,7 @@
 import React from "react";
 import axios from "axios";
 import csvParse from "csv-parse/lib/sync";
-import BarChartAnimation from "./BarChartAnimation";
+import RacingBarChart from "./RacingBarChart";
 
 const dataUrl = "/data/category-brands.csv";
 const numOfBars = 12;
@@ -118,7 +118,7 @@ function App() {
   if (keyframes.length === 0) {
     return false;
   }
-  return <BarChartAnimation
+  return <RacingBarChart
     keyframes={keyframes}
     numOfBars={numOfBars}
     width={chartWidth}
