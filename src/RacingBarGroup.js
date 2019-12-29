@@ -4,7 +4,7 @@ import Bar from "./Bar";
 
 const AnimatedBar = animated(Bar);
 
-const SpringBars = ({ frameData, xScale, yScale, colorScale }) => {
+const RacingBarGroup = ({ frameData, xScale, yScale, colorScale }) => {
   const transitions = useTransition(
     frameData.map(({ name, value }, idx) => ({
       y: yScale(idx),
@@ -40,4 +40,4 @@ const SpringBars = ({ frameData, xScale, yScale, colorScale }) => {
   });
 };
 
-export default SpringBars;
+export default RacingBarGroup;
