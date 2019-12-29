@@ -1,29 +1,9 @@
 import React from "react";
-import { Spring, animated } from "react-spring/renderprops";
 import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
-import { AxisTop as VxAxisTop } from "@vx/axis";
 import { Group } from "@vx/group";
+import RacingAxisTop from "./RacingAxisTop";
 import RacingBarGroup from "./RacingBarGroup";
-
-class AxisTop extends React.Component {
-  render() {
-    const { domainMax, xMax } = this.props;
-    const xScaleForAxis = scaleLinear({
-      domain: [0, domainMax],
-      range: [0, xMax]
-    });
-    return <VxAxisTop
-      top={0}
-      left={0}
-      scale={xScaleForAxis}
-      tickLabelProps={() => ({ textAnchor: 'middle', dy: '-0.25em', fontSize: 12, })}
-      numTicks={5}
-    />
-  }
-}
-
-const AnimatedAxisTop = animated(AxisTop);
 
 function RacingBarChart({
   numOfBars,
@@ -32,15 +12,6 @@ function RacingBarChart({
   padding,
   keyframes,
 }) {
-  const nameList = React.useMemo(
-    () => {
-      if (keyframes.length === 0) {
-        return []
-      }
-      return keyframes[0].data.map(d => d.name);
-    }, 
-    [keyframes]
-  );
   const [frameIdx, setFrameIdx] = React.useState(0);
   const frame = keyframes[frameIdx];
   React.useEffect(() => {
@@ -55,8 +26,9 @@ function RacingBarChart({
   const values = frameData.map(({ value }) => value);
   const xMax = width - padding.left - padding.right;
   const yMax = height - padding.top - padding.bottom;
+  const domainMax = Math.max(...values);
   const xScale = scaleLinear({
-    domain: [0, Math.max(...values)],
+    domain: [0, domainMax],
     range: [0, xMax]
   });
   const yScale = React.useMemo(
@@ -69,7 +41,15 @@ function RacingBarChart({
       }),
     [numOfBars, yMax]
   );
-
+  const nameList = React.useMemo(
+    () => {
+      if (keyframes.length === 0) {
+        return []
+      }
+      return keyframes[0].data.map(d => d.name);
+    },
+    [keyframes]
+  );
   const colorScale = React.useMemo(
     () =>
       scaleOrdinal(schemeTableau10)
@@ -93,16 +73,11 @@ function RacingBarChart({
           y2={yMax}
           stroke="black"
         />
-        <Spring native to={{ domainMax: Math.max(...values) }}>
-          {({ domainMax }) => {
-            return <AnimatedAxisTop
-              xMax={xMax}
-              domainMax={domainMax}
-            />
-          }}
-        </Spring>
+        <RacingAxisTop
+          domainMax={domainMax}
+          xMax={xMax}
+        />
       </Group>
-      
     </svg>
   );
 }
