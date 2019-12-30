@@ -22,7 +22,7 @@ function RacingBarChart({
       }, 250);
     }
   });
-  const { data: frameData } = frame;
+  const { date: currentDate, data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
   const xMax = width - padding.left - padding.right;
   const yMax = height - padding.top - padding.bottom;
@@ -57,6 +57,7 @@ function RacingBarChart({
         .range(schemeTableau10),
     [nameList]
   );
+  const dateInYear = currentDate.getFullYear();
   return (
     <svg width={width} height={height}>
       <Group top={padding.top} left={padding.left}>
@@ -66,6 +67,7 @@ function RacingBarChart({
           yScale={yScale}
           colorScale={colorScale}
         />
+        <text style={{ fontSize: 20 }} x={xMax} y={yMax}>{dateInYear}</text>
         <line
           x1={0}
           y1={0}
