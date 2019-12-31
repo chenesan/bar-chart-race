@@ -67,7 +67,14 @@ function RacingBarChart({
           yScale={yScale}
           colorScale={colorScale}
         />
-        <text style={{ fontSize: 20 }} x={xMax} y={yMax}>{dateInYear}</text>
+        <text
+          textAnchor="end"
+          style={{ fontSize: "1.25em" }}
+          x={xMax}
+          y={yMax}
+        >
+          {dateInYear}
+        </text>
         <line
           x1={0}
           y1={0}
