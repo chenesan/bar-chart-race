@@ -1,6 +1,6 @@
 {
-  "short_name": "React App",
-  "name": "Create React App Sample",
+  "short_name": "Bar Chart Race",
+  "name": "Bar Chart Race built with vx and react-spring",
   "icons": [
     {
       "src": "favicon.ico",
