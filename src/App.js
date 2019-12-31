@@ -8,11 +8,11 @@ const numOfBars = 12;
 const numOfSlice = 10;
 const chartWidth = 1200;
 const chartHeight = 600;
-const chartPadding = {
+const chartMargin = {
   top: 50,
-  right: 50,
-  bottom: 0,
-  left: 50
+  right: 10,
+  bottom: 30,
+  left: 10,
 };
 
 const buildFindData = data => {
@@ -133,7 +133,7 @@ function App() {
           numOfBars={numOfBars}
           width={chartWidth}
           height={chartHeight}
-          padding={chartPadding}
+          margin={chartMargin}
         />
       )}
       <p>

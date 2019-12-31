@@ -9,7 +9,7 @@ function RacingBarChart({
   numOfBars,
   width,
   height,
-  padding,
+  margin,
   keyframes,
 }) {
   const [frameIdx, setFrameIdx] = React.useState(0);
@@ -24,8 +24,8 @@ function RacingBarChart({
   });
   const { date: currentDate, data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
-  const xMax = width - padding.left - padding.right;
-  const yMax = height - padding.top - padding.bottom;
+  const xMax = width - margin.left - margin.right;
+  const yMax = height - margin.top - margin.bottom;
   const domainMax = Math.max(...values);
   const xScale = scaleLinear({
     domain: [0, domainMax],
@@ -60,7 +60,7 @@ function RacingBarChart({
   const dateInYear = currentDate.getFullYear();
   return (
     <svg width={width} height={height}>
-      <Group top={padding.top} left={padding.left}>
+      <Group top={margin.top} left={margin.left}>
         <RacingBarGroup
           frameData={frameData.slice(0, numOfBars)}
           xScale={xScale}
@@ -87,7 +87,7 @@ function RacingBarChart({
 RacingBarChart.defaultProps = {
   width: 600,
   height: 450,
-  padding: {
+  margin: {
     top: 0,
     right: 0,
     bottom: 0,
