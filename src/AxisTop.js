@@ -5,6 +5,7 @@ import { AxisTop as VxAxisTop } from "@vx/axis";
 
 const AxisTop = (props) => {
   const { domainMax, xMax } = props;
+  const numTicks = xMax > 500 ? 5 : Math.floor(xMax / 100);
   const xScaleForAxis = scaleLinear({
     domain: [0, domainMax],
     range: [0, xMax]
@@ -14,7 +15,7 @@ const AxisTop = (props) => {
     left={0}
     scale={xScaleForAxis}
     tickLabelProps={() => ({ textAnchor: 'middle', dy: '-0.25em', fontSize: 12, })}
-    numTicks={5}
+    numTicks={numTicks}
   />
 }
 

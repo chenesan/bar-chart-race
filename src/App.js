@@ -1,13 +1,11 @@
 import React from "react";
-import axios from "axios";
-import csvParse from "csv-parse/lib/sync";
 import RacingBarChart from "./RacingBarChart";
+import useKeyframes from "./useKeyframes";
+import useWindowSize from "./useWindowSize";
 
 const dataUrl = "/data/category-brands.csv";
 const numOfBars = 12;
 const numOfSlice = 10;
-const chartWidth = 1200;
-const chartHeight = 600;
 const chartMargin = {
   top: 50,
   right: 10,
@@ -15,108 +13,13 @@ const chartMargin = {
   left: 10,
 };
 
-const buildFindData = data => {
-  const dataByDateAndName = new Map();
-  data.forEach(dataPoint => {
-    const { date, name } = dataPoint;
-    if (!dataByDateAndName.get(date)) {
-      dataByDateAndName.set(date, { [name]: dataPoint });
-    } else {
-      const nextGroup = {
-        ...dataByDateAndName.get(date),
-        [name]: dataPoint
-      };
-      dataByDateAndName.set(date, nextGroup);
-    }
-  });
-  const finder = ({ date, name }) => {
-    try {
-      return dataByDateAndName.get(date)[name];
-    } catch (e) {
-      return null;
-    }
-  };
-  return finder;
-}
-
-const makeKeyframes = (data, numOfSlice) => {
-  const findData = buildFindData(data);
-  const nameSet = new Set(data.map(({ name }) => name));
-  const nameList = [...nameSet];
-  const dateSet = new Set(data.map(({ date }) => date));
-  const dateList = [...dateSet];
-
-  const frames = dateList.sort().map(date => ({
-    date,
-    data: nameList.map(name => {
-      const dataPoint = findData({ date, name });
-      return {
-        ...dataPoint,
-        value: dataPoint ? dataPoint.value : 0,
-      };
-    })
-  }));
-  const keyframes = frames
-    .reduce((result, frame, idx) => {
-      const prev = frame;
-      const next = idx !== frames.length - 1 ? frames[idx + 1] : null;
-      if (!next) {
-        result.push({ ...frame, date: new Date(frame.date) });
-      } else {
-        const prevTimestamp = new Date(prev.date).getTime();
-        const nextTimestamp = new Date(next.date).getTime();
-        const diff = nextTimestamp - prevTimestamp;
-        for (let i = 0; i < numOfSlice; i++) {
-          const sliceDate = new Date(prevTimestamp + diff * i / numOfSlice);
-          const sliceData = frame.data.map(({ name, value, ...others }) => {
-            const prevValue = value;
-            const nextDataPoint = findData({ date: next.date, name });
-            const nextValue = nextDataPoint ? nextDataPoint.value : 0;
-            const sliceValue =
-              prevValue + (nextValue - prevValue) * i / numOfSlice;
-            return {
-              name,
-              value: sliceValue,
-              ...others
-            };
-          });
-          result.push({
-            date: sliceDate,
-            data: sliceData
-          });
-        }
-      }
-      return result;
-    }, [])
-    .map(({ date, data }) => {
-      return {
-        date,
-        data: data.sort((a, b) => b.value - a.value)
-      };
-    });
-
-  return keyframes;
-};
-
 function App() {
-  const [keyframes, setKeyframes] = React.useState([]);
-  React.useEffect(() => {
-    axios.get(dataUrl).then(resp => {
-      const { data: csvString } = resp;
-      const nextData = csvParse(csvString)
-        .slice(1)
-        .map(([date, name, category, value]) => ({
-          date,
-          name,
-          category,
-          value: Number(value)
-        }));
-      const keyframes = makeKeyframes(nextData, numOfSlice);
-      setKeyframes(keyframes);
-    });
-  }, []);
+  const { width: windowWidth } = useWindowSize();
+  const chartWidth = windowWidth - 64;
+  const chartHeight = 600;
+  const keyframes = useKeyframes(dataUrl, numOfSlice);
   return (
-    <div style={{ marginLeft: "2em" }}>
+    <div style={{ margin: "0 2em" }}>
       <h1>Bar Chart Race Demo</h1>
       <section>
         This is a bar chart race of the value (in million dollars) of top global brands, during 2000 ~ 2019.
@@ -139,10 +42,8 @@ function App() {
       <p>
         <a target="_blank" rel="noopener noreferrer" href="https://icons-for-free.com/bar+chart+black+background+chart+data+diagram+graph+icon-1320086870829698051/">Favicon</a> by Alla Afanasenko <a href="https://creativecommons.org/licenses/by/3.0/" target="_blank" rel="noopener noreferrer"> CC BY </a>
       </p>
-      
     </div>
-  )
-  
+  );
 }
 
 export default App;
