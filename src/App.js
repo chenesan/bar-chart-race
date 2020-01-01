@@ -1,12 +1,11 @@
 import React from "react";
 import RacingBarChart from "./RacingBarChart";
 import useKeyframes from "./useKeyframes";
+import useWindowSize from "./useWindowSize";
 
 const dataUrl = "/data/category-brands.csv";
 const numOfBars = 12;
 const numOfSlice = 10;
-const chartWidth = 1200;
-const chartHeight = 600;
 const chartMargin = {
   top: 50,
   right: 10,
@@ -15,9 +14,12 @@ const chartMargin = {
 };
 
 function App() {
+  const { width: windowWidth } = useWindowSize();
+  const chartWidth = windowWidth - 64;
+  const chartHeight = 600;
   const keyframes = useKeyframes(dataUrl, numOfSlice);
   return (
-    <div style={{ marginLeft: "2em" }}>
+    <div style={{ margin: "0 2em" }}>
       <h1>Bar Chart Race Demo</h1>
       <section>
         This is a bar chart race of the value (in million dollars) of top global brands, during 2000 ~ 2019.
