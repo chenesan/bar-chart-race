@@ -18,7 +18,12 @@ function App() {
   const chartWidth = windowWidth - 64;
   const chartHeight = 600;
   const keyframes = useKeyframes(dataUrl, numOfSlice);
-  const handleReplay = () => {};
+  const chartRef = React.useRef();
+  const handleReplay = () => {
+    if (chartRef.current) {
+      chartRef.current.replay();
+    }
+  };
   return (
     <div style={{ margin: "0 2em" }}>
       <h1>Bar Chart Race Demo</h1>
@@ -40,6 +45,7 @@ function App() {
             width={chartWidth}
             height={chartHeight}
             margin={chartMargin}
+            ref={chartRef}
           />
         )}
       </div>
