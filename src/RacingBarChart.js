@@ -5,23 +5,33 @@ import { Group } from "@vx/group";
 import RacingAxisTop from "./RacingAxisTop";
 import RacingBarGroup from "./RacingBarGroup";
 
-function RacingBarChart({
+const RacingBarChart = React.forwardRef(({
   numOfBars,
   width,
   height,
   margin,
   keyframes,
-}) {
+}, ref) => {
   const [frameIdx, setFrameIdx] = React.useState(0);
-  const frame = keyframes[frameIdx];
+  const timeoutRef = React.useRef();
+  // when replay, increment the key to rerender the chart.
+  const [animationKey, setAnimationKey] = React.useState(0);
   React.useEffect(() => {
     const isLastFrame = frameIdx === keyframes.length - 1;
     if (!isLastFrame) {
-      setTimeout(() => {
-        setFrameIdx(frameIdx + 1);
+      timeoutRef.current = setTimeout(() => {
+        setFrameIdx((idx) => idx + 1);
       }, 250);
     }
   });
+  React.useImperativeHandle(ref, () => ({
+    replay: () => {
+      clearTimeout(timeoutRef.current);
+      setFrameIdx(0);
+      setAnimationKey(key => key + 1);
+    }
+  }));
+  const frame = keyframes[frameIdx];
   const { date: currentDate, data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
   const xMax = width - margin.left - margin.right;
@@ -60,7 +70,7 @@ function RacingBarChart({
   const dateInYear = currentDate.getFullYear();
   return (
     <svg width={width} height={height}>
-      <Group top={margin.top} left={margin.left}>
+      <Group top={margin.top} left={margin.left} key={animationKey}>
         <RacingBarGroup
           frameData={frameData.slice(0, numOfBars)}
           xScale={xScale}
@@ -89,7 +99,7 @@ function RacingBarChart({
       </Group>
     </svg>
   );
-}
+});
 
 RacingBarChart.defaultProps = {
   width: 600,
@@ -100,6 +110,6 @@ RacingBarChart.defaultProps = {
     bottom: 0,
     left: 100
   },
-}
+};
 
 export default RacingBarChart;
