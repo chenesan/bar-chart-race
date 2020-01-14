@@ -12,23 +12,36 @@ const RacingBarChart = React.forwardRef(({
   margin,
   keyframes,
 }, ref) => {
-  const [frameIdx, setFrameIdx] = React.useState(0);
-  const timeoutRef = React.useRef();
+  const [{ frameIdx, animationKey }, setAnimation] = React.useState({
+    frameIdx: 0,
+    animationKey: 0,
+  });
+  const updateFrameRef = React.useRef();
   // when replay, increment the key to rerender the chart.
-  const [animationKey, setAnimationKey] = React.useState(0);
   React.useEffect(() => {
-    const isLastFrame = frameIdx === keyframes.length - 1;
-    if (!isLastFrame) {
-      timeoutRef.current = setTimeout(() => {
-        setFrameIdx((idx) => idx + 1);
+    if (!updateFrameRef.current) {
+      updateFrameRef.current = setTimeout(() => {
+        setAnimation(({ frameIdx: prevFrameIdx, ...others }) => {
+          const isLastFrame = prevFrameIdx === keyframes.length - 1;
+          const nextFrameIdx = isLastFrame ? prevFrameIdx : prevFrameIdx + 1;
+          return {
+            ...others,
+            frameIdx: nextFrameIdx,
+          }
+        });
+        updateFrameRef.current = null;
       }, 250);
     }
   });
   React.useImperativeHandle(ref, () => ({
     replay: () => {
-      clearTimeout(timeoutRef.current);
-      setFrameIdx(0);
-      setAnimationKey(key => key + 1);
+      clearTimeout(updateFrameRef.current);
+      updateFrameRef.current = null;
+      setAnimation(({ animationKey, ...others }) => ({
+        ...others,
+        frameIdx: 0,
+        animationKey: animationKey + 1,
+      }));
     }
   }));
   const frame = keyframes[frameIdx];
