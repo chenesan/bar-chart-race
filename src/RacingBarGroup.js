@@ -12,8 +12,8 @@ const RacingBarGroup = ({ frameData, xScale, yScale, colorScale }) => {
       value,
       name
     })),
-    d => d.name,
     {
+      key: d => d.name,
       initial: d => d,
       from: { y: yScale.range()[1] + 50, width: 0, value: 0 },
       leave: { y: yScale.range()[1] + 50, width: 0, value: 0 },
@@ -22,7 +22,7 @@ const RacingBarGroup = ({ frameData, xScale, yScale, colorScale }) => {
       unique: true,
     }
   );
-  return transitions.map(({ item, props }) => {
+  return transitions((props, item, a3, a4) => {
     const { y, value, width } = props;
     const { name } = item;
     return (

@@ -2,7 +2,7 @@ import React from "react";
 import { Bar as VxBar } from "@vx/shape";
 import { Text as VxText } from "@vx/text";
 
-const Bar = ({ color, x, y, width, height, name, value }) => {
+function Bar({ color, x, y, width, height, name, value }) {
   const text = `${name} ${value}`;
   return (
     <React.Fragment>

@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import { scaleLinear } from "@vx/scale";
 import { AxisTop as VxAxisTop } from "@vx/axis";
 
-const AxisTop = (props) => {
+function AxisTop(props) {
   const { domainMax, xMax } = props;
   const numTicks = xMax > 500 ? 5 : Math.floor(xMax / 100);
   const xScaleForAxis = scaleLinear({
