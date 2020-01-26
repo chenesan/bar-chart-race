@@ -29,6 +29,11 @@ function App() {
       chartRef.current.start();
     }
   }
+  const handleStop = () => {
+    if (chartRef.current) {
+      chartRef.current.stop();
+    }
+  }
   return (
     <div style={{ margin: "0 2em" }}>
       <h1>Bar Chart Race Demo</h1>
@@ -44,6 +49,7 @@ function App() {
       <div style={{ paddingTop: "1em"}}>
         <button onClick={handleReplay}>replay</button>
         <button onClick={handleStart}>start</button>
+        <button onClick={handleStop}>stop</button>
         {keyframes.length > 0 && (
           <RacingBarChart
             keyframes={keyframes}
