@@ -59,6 +59,20 @@ const RacingBarChart = React.forwardRef(({
         playing: false,
       }));
       barGroupRef.current.stop();
+    },
+    pause: () => {
+      setAnimation(animation => ({
+        ...animation,
+        playing: false,
+      }));
+      barGroupRef.current.pause();
+    },
+    resume: () => {
+      setAnimation(animation => ({
+        ...animation,
+        playing: true,
+      }));
+      barGroupRef.current.resume();
     }
   }));
   useLayoutEffect(() => {
