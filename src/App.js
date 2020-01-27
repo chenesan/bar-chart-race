@@ -19,9 +19,9 @@ function App() {
   const chartHeight = 600;
   const keyframes = useKeyframes(dataUrl, numOfSlice);
   const chartRef = React.useRef();
-  const handleReplay = () => {
+  const makeHandle = funcName => () => {
     if (chartRef.current) {
-      chartRef.current.replay();
+      chartRef.current[funcName]();
     }
   };
   return (
@@ -37,7 +37,9 @@ function App() {
         <br/>
       </section>
       <div style={{ paddingTop: "1em"}}>
-        <button onClick={handleReplay}>replay</button>
+        <button onClick={makeHandle('replay')}>replay</button>
+        <button onClick={makeHandle('start')}>start</button>
+        <button onClick={makeHandle('stop')}>stop</button>
         {keyframes.length > 0 && (
           <RacingBarChart
             keyframes={keyframes}

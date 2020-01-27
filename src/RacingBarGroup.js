@@ -1,10 +1,10 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import { useTransition, animated } from "react-spring";
 import Bar from "./Bar";
 
 const AnimatedBar = animated(Bar);
 
-const RacingBarGroup = ({ frameData, xScale, yScale, colorScale }) => {
+const RacingBarGroup = forwardRef(({ frameData, xScale, yScale, colorScale }, ref) => {
   const transitions = useTransition(
     frameData.map(({ name, value }, idx) => ({
       y: yScale(idx),
@@ -20,6 +20,7 @@ const RacingBarGroup = ({ frameData, xScale, yScale, colorScale }) => {
       enter: d => d,
       update: d => d,
       unique: true,
+      ref,
     }
   );
   return transitions.map(({ item, props }) => {
@@ -38,6 +39,6 @@ const RacingBarGroup = ({ frameData, xScale, yScale, colorScale }) => {
       />
     );
   });
-};
+});
 
 export default RacingBarGroup;

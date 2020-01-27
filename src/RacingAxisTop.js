@@ -1,19 +1,19 @@
-import React from "react";
+import React, { forwardRef } from "react";
 import PropTypes from "prop-types";
 import { useSpring, animated } from "react-spring";
 import AxisTop from "./AxisTop";
 
 const AnimatedAxisTop = animated(AxisTop);
 
-const RacingAxisTop = ({ domainMax, xMax }) => {
-  const springProps = useSpring({ domainMax });
+const RacingAxisTop = forwardRef(({ domainMax, xMax }, ref) => {
+  const springProps = useSpring({ domainMax, ref });
   return (
     <AnimatedAxisTop
       xMax={xMax}
       {...springProps}
     />
   );
-};
+});
 
 RacingAxisTop.propTypes = {
   domainMax: PropTypes.number.isRequired,
