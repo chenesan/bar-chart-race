@@ -11,6 +11,8 @@ const RacingBarChart = React.forwardRef(({
   height,
   margin,
   keyframes,
+  onStart,
+  onStop,
 }, ref) => {
   const [{ frameIdx, animationKey, playing }, setAnimation] = useState({
     frameIdx: 0,
@@ -62,7 +64,19 @@ const RacingBarChart = React.forwardRef(({
       barGroupRef.current.stop();
       axisRef.current.stop();
     },
+    playing,
   }));
+  const prevPlayingRef = useRef(playing);
+  useEffect(() => {
+    if (prevPlayingRef.current !== playing) {
+      if (playing) {
+        onStart();
+      } else {
+        onStop();
+      }
+    }
+    prevPlayingRef.current = playing;
+  }, [playing]);
   useLayoutEffect(() => {
     if (barGroupRef.current) {
       if (playing) {

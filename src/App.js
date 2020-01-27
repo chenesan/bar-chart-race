@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useState } from "react";
 import RacingBarChart from "./RacingBarChart";
 import useKeyframes from "./useKeyframes";
 import useWindowSize from "./useWindowSize";
@@ -19,11 +19,17 @@ function App() {
   const chartHeight = 600;
   const keyframes = useKeyframes(dataUrl, numOfSlice);
   const chartRef = React.useRef();
-  const makeHandle = funcName => () => {
-    if (chartRef.current) {
-      chartRef.current[funcName]();
-    }
-  };
+  const handleReplay = () => {
+    chartRef.current.replay();
+  }
+  const handleStart = () => {
+    chartRef.current.start();
+  }
+  const handleStop = () => {
+    chartRef.current.stop();
+  }
+  const playing = chartRef.current ? chartRef.current.playing : false;
+  const [_, forceUpdate] = useState();
   return (
     <div style={{ margin: "0 2em" }}>
       <h1>Bar Chart Race Demo</h1>
@@ -37,9 +43,10 @@ function App() {
         <br/>
       </section>
       <div style={{ paddingTop: "1em"}}>
-        <button onClick={makeHandle('replay')}>replay</button>
-        <button onClick={makeHandle('start')}>start</button>
-        <button onClick={makeHandle('stop')}>stop</button>
+        <button onClick={handleReplay}>replay</button>
+        <button onClick={playing ? handleStop : handleStart}>
+          { playing ? 'stop' : 'start' }
+        </button>
         {keyframes.length > 0 && (
           <RacingBarChart
             keyframes={keyframes}
@@ -47,6 +54,8 @@ function App() {
             width={chartWidth}
             height={chartHeight}
             margin={chartMargin}
+            onStart={() => forceUpdate(true)}
+            onStop={() => forceUpdate(false)}
             ref={chartRef}
           />
         )}
