@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useImperativeHandle, useMemo, useRef, useState, useLayoutEffect } from "react";
 import { schemeTableau10 } from "d3-scale-chromatic";
 import { scaleLinear, scaleBand, scaleOrdinal } from "@vx/scale";
 import { Group } from "@vx/group";
@@ -11,29 +11,35 @@ const RacingBarChart = React.forwardRef(({
   height,
   margin,
   keyframes,
+  onStart,
+  onStop,
 }, ref) => {
-  const [{ frameIdx, animationKey }, setAnimation] = React.useState({
+  const [{ frameIdx, animationKey, playing }, setAnimation] = useState({
     frameIdx: 0,
     animationKey: 0,
+    playing: false,
   });
-  const updateFrameRef = React.useRef();
+  const updateFrameRef = useRef();
   // when replay, increment the key to rerender the chart.
-  React.useEffect(() => {
+  useEffect(() => {
     if (!updateFrameRef.current) {
       updateFrameRef.current = setTimeout(() => {
-        setAnimation(({ frameIdx: prevFrameIdx, ...others }) => {
+        setAnimation(({ frameIdx: prevFrameIdx, playing, ...others }) => {
           const isLastFrame = prevFrameIdx === keyframes.length - 1;
           const nextFrameIdx = isLastFrame ? prevFrameIdx : prevFrameIdx + 1;
           return {
             ...others,
-            frameIdx: nextFrameIdx,
+            frameIdx: playing ? nextFrameIdx : prevFrameIdx,
+            playing: !!(playing && !isLastFrame),
           }
         });
         updateFrameRef.current = null;
       }, 250);
     }
   });
-  React.useImperativeHandle(ref, () => ({
+  const barGroupRef = useRef();
+  const axisRef = useRef();
+  useImperativeHandle(ref, () => ({
     replay: () => {
       clearTimeout(updateFrameRef.current);
       updateFrameRef.current = null;
@@ -41,9 +47,44 @@ const RacingBarChart = React.forwardRef(({
         ...others,
         frameIdx: 0,
         animationKey: animationKey + 1,
+        playing: true,
       }));
-    }
+    },
+    start: () => {
+      setAnimation(animation => ({
+        ...animation,
+        playing: true,
+      }));
+    },
+    stop: () => {
+      setAnimation(animation => ({
+        ...animation,
+        playing: false,
+      }));
+      barGroupRef.current.stop();
+      axisRef.current.stop();
+    },
+    playing,
   }));
+  const prevPlayingRef = useRef(playing);
+  useEffect(() => {
+    if (prevPlayingRef.current !== playing) {
+      if (playing) {
+        onStart();
+      } else {
+        onStop();
+      }
+    }
+    prevPlayingRef.current = playing;
+  }, [playing]);
+  useLayoutEffect(() => {
+    if (barGroupRef.current) {
+      if (playing) {
+        barGroupRef.current.start();
+        axisRef.current.start();
+      }
+    }
+  });
   const frame = keyframes[frameIdx];
   const { date: currentDate, data: frameData } = frame;
   const values = frameData.map(({ value }) => value);
@@ -54,7 +95,7 @@ const RacingBarChart = React.forwardRef(({
     domain: [0, domainMax],
     range: [0, xMax]
   });
-  const yScale = React.useMemo(
+  const yScale = useMemo(
     () =>
       scaleBand({
         domain: Array(numOfBars)
@@ -64,7 +105,7 @@ const RacingBarChart = React.forwardRef(({
       }),
     [numOfBars, yMax]
   );
-  const nameList = React.useMemo(
+  const nameList = useMemo(
     () => {
       if (keyframes.length === 0) {
         return []
@@ -73,7 +114,7 @@ const RacingBarChart = React.forwardRef(({
     },
     [keyframes]
   );
-  const colorScale = React.useMemo(
+  const colorScale = useMemo(
     () =>
       scaleOrdinal(schemeTableau10)
         .domain(nameList)
@@ -89,6 +130,7 @@ const RacingBarChart = React.forwardRef(({
           xScale={xScale}
           yScale={yScale}
           colorScale={colorScale}
+          ref={barGroupRef}
         />
         <text
           textAnchor="end"
@@ -108,6 +150,7 @@ const RacingBarChart = React.forwardRef(({
         <RacingAxisTop
           domainMax={domainMax}
           xMax={xMax}
+          ref={axisRef}
         />
       </Group>
     </svg>
